@@ -13,7 +13,7 @@ export const AuthProvider = ({children}) =>{
 
     const [token, setToken] =useState(localStorage.getItem("token"));
     const [authUser, setAuthUser] =useState(null);
-    const [onlineUser, setOnlineUser] =useState([]);
+    const [onlineUsers, setOnlineUser] =useState([]);
     const [socket, setSocket] =useState(null);
 
     // check if user is authenticated and if so, set the user data and connect the socket
@@ -100,7 +100,7 @@ export const AuthProvider = ({children}) =>{
     const value = {
         axios,
         authUser,
-        onlineUser,
+        onlineUsers,
         socket,
         login,
         logout,
