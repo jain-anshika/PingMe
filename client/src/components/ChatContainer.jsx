@@ -18,7 +18,7 @@ const ChatContainer = ({selectedUser, setSelectedUser }) => {
       <div className='flex item-center gap-3 py-3 mx-4 border-b border-stone-500'>
         <img src={assets.profile_martin} alt="" className='w-8 rounded-full' />
         <p className='flex-1 text-lg text-white flex items-center gap-2'>
-            Martin Johnson
+            {selectedUser.fullName}
             <span className='w-2 h-2 rounded-full bg-green-500'></span>
         </p>
         <img onClick={()=> setSelectedUser(null) } src={assets.arrow_icon} alt="" className='md:hidden max-w-7'/>
@@ -43,7 +43,7 @@ const ChatContainer = ({selectedUser, setSelectedUser }) => {
       </div>
 
       {/* ----------Bottom area----------*/}
-        <dev className='absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3'>
+        <div className='absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3'>
           <div className='flex-1 flex items-center bg-gray-100/12 px-3 rounded-full'>
             <input type="text" placeholder="Send a message" 
             className='flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400'/>
@@ -53,7 +53,7 @@ const ChatContainer = ({selectedUser, setSelectedUser }) => {
             </label>
           </div>
           <img src={assets.send_button} alt="" className='w-7 cursor-pointer'/>
-        </dev>
+        </div>
 
     </div>
   ): (
