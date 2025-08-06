@@ -2,11 +2,12 @@ import React, { useState, useContext } from 'react'
 import assets from '../assets/assets';
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext';
+import { Component } from '../components/ui/customizable-loader-spinner-transition';
 
 
 const ProfilePage = () => {
 
-  const {authUser, updateProfile} = useContext(AuthContext);
+  const {authUser, updateProfile, isUpdatingProfile} = useContext(AuthContext);
 
     const[selectedImg, setSelectedImg] = useState(null)
     const navigate = useNavigate();
@@ -45,7 +46,17 @@ const ProfilePage = () => {
           type="text" required placeholder='Your name' className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500' />
           <textarea onChange={(e)=>setBio(e.target.value)} value={bio} placeholder='Write profile bio' required className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500' rows={4}></textarea>
 
-          <button type="submit" className='bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer'>Save</button>
+          <button 
+            type="submit" 
+            disabled={isUpdatingProfile}
+            className={`p-2 rounded-full text-lg cursor-pointer transition-all duration-200 ${
+              isUpdatingProfile 
+                ? 'bg-gray-500 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-purple-400 to-violet-600 hover:from-purple-500 hover:to-violet-700'
+            } text-white`}
+          >
+            {isUpdatingProfile ? <Component /> : 'Save'}
+          </button>
         </form>
         <img  className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImg && 'rounded-full'}`} src={authUser?.profilePic ||assets.logo_icon} alt="" />
       </div>

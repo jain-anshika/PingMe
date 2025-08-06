@@ -15,6 +15,7 @@ export const AuthProvider = ({children}) =>{
     const [authUser, setAuthUser] =useState(null);
     const [onlineUsers, setOnlineUser] =useState([]);
     const [socket, setSocket] =useState(null);
+    const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
     // check if user is authenticated and if so, set the user data and connect the socket
         const checkAuth = async () =>{
@@ -63,6 +64,7 @@ export const AuthProvider = ({children}) =>{
         //update profile function to handle user profile update
 
         const updateProfile = async (body) =>{
+            setIsUpdatingProfile(true);
             try {
                 const {data} = await axios.put("/api/auth/update-profile", body);
                 if(data.success){
@@ -71,6 +73,8 @@ export const AuthProvider = ({children}) =>{
                 }
             } catch (error) {
                 toast.error(error.message)
+            } finally {
+                setIsUpdatingProfile(false);
             }
         }
 
@@ -104,7 +108,8 @@ export const AuthProvider = ({children}) =>{
         socket,
         login,
         logout,
-        updateProfile
+        updateProfile,
+        isUpdatingProfile
     }
 
     return (
