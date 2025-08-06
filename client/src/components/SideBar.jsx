@@ -27,7 +27,10 @@ const SideBar = () => {
     <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ''} `}>
         <div className='pb-5'>
             <div className='flex items-center justify-between'>
-                <img src={assets.logo} alt="logo" className='max-w-40' />
+                <div className='flex items-center gap-3'>
+                    <img src={assets.logo_icon} alt="PingMe logo" className='h-6 w-auto object-contain' />
+                    <h2 className='text-white text-lg sm:text-xl font-medium'>PingMe</h2>
+                </div>
                 <div className='relative py-2 group'>
                 <img src={assets.menu_icon} alt="menu" className='max-h-5 cursor-pointer' />
                 <div className='absolute top-full right-0 z-20 w-32 p-5 rounded-md bg-[#282142] border border-gray-600 text-gray-100 hidden group-hover:block'>
