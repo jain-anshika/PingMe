@@ -43,7 +43,7 @@ const ChatContainer = () => {
       if (selectedUser) {
         getMessages(selectedUser._id);
       }
-    }, [selectedUser]);
+    }, [selectedUser, getMessages]);
 
     useEffect(()=>{
       if(scrollEnd.current && messages){
@@ -65,8 +65,10 @@ const ChatContainer = () => {
       </div>
       {/* ----------chat area----------*/}
       <div className='flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6'>
-        {messages.map((msg,index)=>(
-          <div key={index} className={`flex items-end gap-2 justify-end ${msg.senderId !== authUser._id && 'flex-row-reverse'}`}>
+        {messages
+          ?.filter(msg => msg && msg.senderId) // skip invalid messages
+          .map((msg,index)=>(
+          <div key={index} className={`flex items-end gap-2 justify-end ${msg.senderId !== authUser._id ? 'flex-row-reverse' : ''}`}>
             {msg.image ? (
               <img src={msg.image} alt="" className='max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8'/>
             ):(
