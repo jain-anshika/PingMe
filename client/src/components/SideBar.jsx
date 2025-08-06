@@ -20,8 +20,9 @@ const SideBar = () => {
     const filteredUsers = input ? users.filter((user) => user.fullName.toLowerCase().includes(input.toLowerCase())) : users;
 
     useEffect(() => {
+        // Only fetch users once when component mounts, not when onlineUsers changes
         getUsers();
-    },[onlineUsers, getUsers])
+    }, [getUsers])
 
   return (
     <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ''} `}>

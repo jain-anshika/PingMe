@@ -12,24 +12,23 @@ export const ChatProvider = ({children}) => {
     const [selectedUser, setSelectedUser] = useState(null);
     const[unseenMessages, setUnseenMessages] = useState({});
 
-    const {socket, axios} = useContext(AuthContext);
+    const {socket, axios, authUser} = useContext(AuthContext);
 
-    //function to get all users for sidebar
-    const getUsers = async () => {
+    //function to get all users for sidebar - memoized to prevent unnecessary re-calls
+    const getUsers = useCallback(async () => {
         try {
             const {data} = await axios.get('/api/messages/users');
             if(data.success){
                 setUsers(data.users);
                 setUnseenMessages(data.unseenMessages);
-
             }
         } catch (error) {
             toast.error(error.message);
         }
-    }
+    }, [axios]);
 
-    //function to get messages for selected user
-    const getMessages = async (userId) => {
+    //function to get messages for selected user - memoized to prevent unnecessary re-calls
+    const getMessages = useCallback(async (userId) => {
         try {
             const {data} = await axios.get(`/api/messages/${userId}`);
             if(data.success){
@@ -38,20 +37,18 @@ export const ChatProvider = ({children}) => {
         } catch (error) {
             toast.error(error.message);
         }
-    }
+    }, [axios]);
 
     //function to send message to selected user
     const sendMessage = async (messageData) => {
         try {
             const {data} = await axios.post(`/api/messages/send/${selectedUser._id}`, messageData);
-            if(data.success){
-                setMessages((prevMessages) => [...prevMessages, data.message]);
-            } else{
+            if(!data.success){
                 toast.error(data.message);
             }
+            // Don't manually add message here - socket will handle it
         } catch (error) {
             toast.error(error.message);
-            
         }
     }
 
@@ -62,26 +59,41 @@ export const ChatProvider = ({children}) => {
         socket.on("newMessage" , (newMessage) => {
             if (!newMessage || !newMessage.senderId) {
                 console.warn("Invalid newMessage received from socket:", newMessage);
-                return; // ✅ Prevent crash
+                return;
             }
 
-            if(selectedUser && newMessage.senderId === selectedUser._id){
-                newMessage.seen = true; // Mark as seen if it's the selected user
+            // Add message if it's part of the current conversation
+            // (either you sent it to selectedUser OR selectedUser sent it to you)
+            if(selectedUser && 
+               (newMessage.senderId === selectedUser._id || 
+                (newMessage.senderId === authUser?._id && newMessage.receiverId === selectedUser._id))){
+                
+                // Mark as seen if it's from the selected user (not your own message)
+                if(newMessage.senderId === selectedUser._id){
+                    newMessage.seen = true;
+                    axios.put(`/api/messages/mark/${newMessage._id}`);
+                }
+                
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
-                axios.put(`/api/messages/mark/${newMessage._id}`);
-            } else{
+            } else if(newMessage.senderId !== authUser?._id) {
+                // Only count unseen messages for messages you didn't send
                 setUnseenMessages((prevUnseenMessages) => ({
                     ...prevUnseenMessages,
                     [newMessage.senderId]: prevUnseenMessages[newMessage.senderId] ? prevUnseenMessages[newMessage.senderId] + 1 : 1
                 }));
             }
         })
-    }, [socket, selectedUser, axios]);
+    }, [socket, selectedUser, axios, authUser]);
 
     //function to unsubscribe from messages
     const unsubscribeFromMessages = useCallback(() => {
         if(socket) socket.off("newMessage");
     }, [socket]);
+
+    useEffect(() => {
+        // Fetch users only once when component mounts
+        getUsers();
+    }, [getUsers]);
 
     useEffect(() => {
         subscribeToMessages();
