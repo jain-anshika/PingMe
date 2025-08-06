@@ -28,7 +28,11 @@ const LoginPage = () => {
     <div className='min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
 
         {/**----------left------------ */}
-        <img src={assets.logo_big} alt="" className='w-[min(30vw,250px)]'/>
+        <div className='flex flex-col items-center gap-4'>
+          <img src={assets.logo_icon} alt="PingMe Logo" className='w-[min(30vw,250px)] max-sm:w-[min(40vw,200px)]'/>
+          <h1 className='text-white text-4xl sm:text-5xl font-bold tracking-wide max-sm:text-3xl'>PingMe</h1>
+          <p className='text-white/80 text-center text-sm sm:text-base max-sm:text-xs px-4'>Connect instantly, chat seamlessly</p>
+        </div>
 
         {/**----------right------------ */}
 
